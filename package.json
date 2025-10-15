@@ -1,0 +1,10 @@
+{
+  "name": "rn-component-sdk",
+  "version": "1.0.0",
+  "private": true,
+  "description": "iOS Framework for React Native components",
+  "dependencies": {
+    "react-native": "file:../todolist-example-rn-app/node_modules/react-native"
+  }
+}
+
