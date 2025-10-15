@@ -22,8 +22,7 @@ Pod::Spec.new do |s|
   
   # Source files - relative to repository root
   s.source_files = 'RNComponentSDK/**/*.{h,m,mm,swift}'
-  s.public_header_files = 'RNComponentSDK/RNComponentSDK.h'
-  s.private_header_files = 'RNComponentSDK/RNComponentSDK-Bridging-Header.h'
+  s.public_header_files = 'RNComponentSDK/RNComponentSDK.h', 'RNComponentSDK/RNReactBridge.h'
   
   # Resources (JS bundle and fonts)
   s.resource_bundles = {
@@ -42,7 +41,6 @@ Pod::Spec.new do |s|
     'SWIFT_VERSION' => '5.0',
     'BUILD_LIBRARY_FOR_DISTRIBUTION' => 'YES',
     'CLANG_CXX_LANGUAGE_STANDARD' => 'c++20',
-    'SWIFT_OBJC_BRIDGING_HEADER' => '${PODS_TARGET_SRCROOT}/RNComponentSDK/RNComponentSDK-Bridging-Header.h',
     'HEADER_SEARCH_PATHS' => '$(inherited) ' \
       '"${PODS_ROOT}/Headers/Public/React-Core" ' \
       '"${PODS_ROOT}/Headers/Public/React-RCTImage" ' \

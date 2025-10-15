@@ -17,7 +17,7 @@ import Foundation
     
     // MARK: - Properties
     
-    private var bridge: RCTBridge?
+    private var bridge: AnyObject?
     private var isInitialized = false
     private let bundleName = "main.jsbundle"
     
@@ -44,36 +44,24 @@ import Foundation
         
         print("[RNBridgeManager] Initializing bridge with bundle: \(jsCodeLocation)")
         
-        do {
-            bridge = RCTBridge(bundleURL: jsCodeLocation, moduleProvider: nil, launchOptions: nil)
-            isInitialized = true
-            print("[RNBridgeManager] Bridge initialized successfully")
-            return true
-        } catch {
-            print("[RNBridgeManager] ERROR: Failed to initialize bridge: \(error)")
-            return false
-        }
+        bridge = RNReactBridge.createBridge(withBundleURL: jsCodeLocation)
+        isInitialized = true
+        print("[RNBridgeManager] Bridge initialized successfully")
+        return true
     }
     
     /// Get the active bridge instance
-    /// - Returns: The RCTBridge instance, or nil if not initialized
-    @objc public func getBridge() -> RCTBridge? {
+    /// - Returns: The bridge instance, or nil if not initialized
+    @objc public func getBridge() -> AnyObject? {
         if !isInitialized {
             _ = initializeBridge()
         }
         return bridge
     }
     
-    /// Reload the React Native bundle (useful for development)
-    @objc public func reloadBridge() {
-        print("[RNBridgeManager] Reloading bridge...")
-        bridge?.reload()
-    }
-    
     /// Invalidate and cleanup the bridge
     @objc public func invalidateBridge() {
         print("[RNBridgeManager] Invalidating bridge...")
-        bridge?.invalidate()
         bridge = nil
         isInitialized = false
     }

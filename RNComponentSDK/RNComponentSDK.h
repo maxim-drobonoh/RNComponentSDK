@@ -13,5 +13,6 @@ FOUNDATION_EXPORT double RNComponentSDKVersionNumber;
 //! Project version string for RNComponentSDK.
 FOUNDATION_EXPORT const unsigned char RNComponentSDKVersionString[];
 
-// Public headers go here
+// Public headers
+#import <RNComponentSDK/RNReactBridge.h>
 

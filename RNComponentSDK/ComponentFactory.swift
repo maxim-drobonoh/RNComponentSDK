@@ -110,22 +110,17 @@ import UIKit
             return createErrorView(message: "Bridge not initialized")
         }
         
-        let rootView = RCTRootView(
-            bridge: bridge,
+        let rootView = RNReactBridge.createRootView(
+            with: bridge,
             moduleName: moduleName,
             initialProperties: initialProps
         )
         
         // Set a reasonable default size
-        rootView?.backgroundColor = .clear
-        rootView?.frame = CGRect(x: 0, y: 0, width: 320, height: 50)
+        rootView.backgroundColor = .clear
+        rootView.frame = CGRect(x: 0, y: 0, width: 320, height: 50)
         
-        guard let view = rootView else {
-            print("[ComponentFactory] ERROR: Failed to create RCTRootView for \(moduleName)")
-            return createErrorView(message: "Failed to create component")
-        }
-        
-        return view
+        return rootView
     }
     
     private func createErrorView(message: String) -> UIView {
