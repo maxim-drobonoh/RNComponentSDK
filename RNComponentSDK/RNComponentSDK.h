@@ -13,7 +13,14 @@ FOUNDATION_EXPORT double RNComponentSDKVersionNumber;
 //! Project version string for RNComponentSDK.
 FOUNDATION_EXPORT const unsigned char RNComponentSDKVersionString[];
 
-// In this header, you should import all the public headers of your framework using statements like #import <RNComponentSDK/PublicHeader.h>
-
-// React Native bridge headers (imported internally, not exposed)
+// Import React Native headers for internal use
+#if __has_include(<React/RCTBridge.h>)
+#import <React/RCTBridge.h>
+#import <React/RCTRootView.h>
+#import <React/RCTBundleURLProvider.h>
+#else
+#import "RCTBridge.h"
+#import "RCTRootView.h"
+#import "RCTBundleURLProvider.h"
+#endif
 

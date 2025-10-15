@@ -5,7 +5,7 @@ Pod::Spec.new do |s|
   s.description  = <<-DESC
                    A native iOS SDK that wraps React Native components with a clean Swift API.
                    Provides SmallTextComponent, LargeTextComponent, and async string array fetching.
-                   Requires React Native to be configured in the consumer's app.
+                   Requires React Native 0.81.x to be installed in the consumer's app via npm.
                    DESC
   s.homepage     = 'https://github.com/maxim-drobonoh/RNComponentSDK'
   s.license      = { :type => 'MIT', :file => 'LICENSE' }
@@ -29,8 +29,11 @@ Pod::Spec.new do |s|
     'RNComponentSDK' => ['RNComponentSDK/Resources/*']
   }
   
-  # React Native is expected to be provided by the consumer's Podfile
-  # via use_react_native!() - no explicit dependencies needed
+  # React Native dependencies
+  # NOTE: React Native pods are NOT available on CocoaPods trunk.
+  # They only exist as local podspecs in node_modules/react-native.
+  # Consumers MUST install React Native via npm and configure with use_react_native!()
+  # This is the standard React Native CocoaPods integration approach.
   
   # Build settings
   s.pod_target_xcconfig = {

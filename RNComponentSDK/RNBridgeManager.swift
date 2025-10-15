@@ -6,7 +6,7 @@
 //
 
 import Foundation
-import React
+// React Native types imported via RNComponentSDK.h umbrella header
 
 /// Manages the React Native bridge for the SDK
 @objc public class RNBridgeManager: NSObject {

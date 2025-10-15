@@ -7,7 +7,7 @@
 
 import Foundation
 import UIKit
-import React
+// React Native types imported via RNComponentSDK.h umbrella header
 
 /// Factory class for creating native UI components backed by React Native
 @objc public class ComponentFactory: NSObject {

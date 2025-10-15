@@ -13,18 +13,31 @@ A native iOS SDK that wraps React Native components with a clean Swift API. Buil
 
 ### Prerequisites
 
-**IMPORTANT**: Your app must have React Native configured. This SDK requires React Native 0.81.x to function.
-
-**Requirements:**
 - iOS 15.1+
 - Xcode 14.0+
 - CocoaPods
-- React Native 0.81.x in your app
+- **React Native 0.81.x** (required)
 
-### Step 1: Add to Podfile
+### Why React Native is Required
+
+This SDK wraps React Native components. React Native CocoaPods integration requires the consumer to install React Native via npm - it's not available on CocoaPods trunk.
+
+### Step 1: Install React Native
+
+In your iOS app project root:
+
+```bash
+# Initialize package.json if you don't have one
+npm init -y
+
+# Install React Native
+npm install react-native@0.81.4
+```
+
+### Step 2: Configure Podfile
 
 ```ruby
-# Configure React Native (REQUIRED)
+# Load React Native CocoaPods helper
 require File.join(File.dirname(`node --print "require.resolve('react-native/package.json')"`), "scripts/react_native_pods")
 
 platform :ios, '15.1'
@@ -33,18 +46,16 @@ prepare_react_native_project!
 target 'YourApp' do
   use_frameworks! :linkage => :static
   
-  # React Native (REQUIRED for RNComponentSDK)
+  # React Native (provides the runtime for RNComponentSDK)
   use_react_native!(
     :path => './node_modules/react-native',
-    :hermes_enabled => true
+    :hermes_enabled => true,
+    :app_path => "#{Dir.pwd}"
   )
   
   # RNComponentSDK
   pod 'RNComponentSDK', 
       :git => 'https://github.com/maxim-drobonoh/RNComponentSDK.git'
-  
-  # Or install from local path:
-  # pod 'RNComponentSDK', :path => '../RNComponentSDK'
 end
 
 post_install do |installer|
@@ -52,16 +63,13 @@ post_install do |installer|
 end
 ```
 
-### Step 2: Install
+### Step 3: Install Pods
 
 ```bash
-cd ios
 pod install
 ```
 
-### Step 3: Open Workspace
-
-**Always use the workspace, not the project:**
+### Step 4: Open Workspace
 
 ```bash
 open YourApp.xcworkspace
