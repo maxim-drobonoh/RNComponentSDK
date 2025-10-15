@@ -1,12 +1,10 @@
-# Podfile for RNComponentSDK Framework
+# Podfile for RNComponentSDK Framework (Development Only)
+# This file is used for developing the SDK itself, not by consumers
 
 platform :ios, '15.1'
 
-# Relative path to React Native
-$RNPath = '../todolist-example-rn-app/node_modules/react-native'
-
-# Load React Native scripts
-require File.join(__dir__, $RNPath, 'scripts', 'react_native_pods.rb')
+# Use local node_modules for React Native
+require File.join(__dir__, 'node_modules/react-native/scripts/react_native_pods.rb')
 
 prepare_react_native_project!
 
@@ -15,9 +13,9 @@ inhibit_all_warnings!
 target 'RNComponentSDK' do
   use_frameworks! :linkage => :static
   
-  # Install React Native pods
+  # Install React Native pods from local node_modules
   use_react_native!(
-    :path => $RNPath,
+    :path => './node_modules/react-native',
     :hermes_enabled => true,
     :app_path => "#{__dir__}"
   )
@@ -25,7 +23,7 @@ target 'RNComponentSDK' do
   post_install do |installer|
     react_native_post_install(
       installer,
-      $RNPath,
+      './node_modules/react-native',
       :mac_catalyst_enabled => false
     )
     

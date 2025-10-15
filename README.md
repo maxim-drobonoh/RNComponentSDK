@@ -254,6 +254,35 @@ pod install
 |----------------|--------------|--------|-------|
 | 1.0.0          | 0.81.x       | 15.1+  | 14.0+ |
 
+## Development Setup
+
+If you want to develop/modify the SDK itself:
+
+### 1. Install React Native
+
+The SDK needs React Native for development:
+
+```bash
+cd /path/to/RNComponentSDK
+npm install
+```
+
+This will install React Native 0.81.4 into the local `node_modules/` folder.
+
+### 2. Install CocoaPods Dependencies
+
+```bash
+pod install
+```
+
+### 3. Open in Xcode
+
+```bash
+open RNComponentSDK.xcworkspace
+```
+
+**Note**: The `Podfile` and `package.json` in this repo are for SDK development only. Consumers of your SDK don't need these files - they only need the `.podspec`.
+
 ## License
 
 MIT License - See [LICENSE](LICENSE) file for details.

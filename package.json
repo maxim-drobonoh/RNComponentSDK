@@ -2,9 +2,18 @@
   "name": "rn-component-sdk",
   "version": "1.0.0",
   "private": true,
-  "description": "iOS Framework for React Native components",
+  "description": "iOS SDK that wraps React Native components with clean Swift API",
+  "scripts": {
+    "setup": "npm install && cd ios && pod install",
+    "postinstall": "echo 'React Native installed. Run: pod install'"
+  },
   "dependencies": {
-    "react-native": "file:../todolist-example-rn-app/node_modules/react-native"
+    "react": "18.2.0",
+    "react-native": "0.81.4"
+  },
+  "devDependencies": {},
+  "engines": {
+    "node": ">=18.0.0"
   }
 }
 
