@@ -7,26 +7,26 @@ Pod::Spec.new do |s|
                    Provides SmallTextComponent, LargeTextComponent, and async string array fetching.
                    Requires React Native to be configured in the consumer's app.
                    DESC
-  s.homepage     = 'https://github.com/maxim-drobonoh/todolistsdk'
+  s.homepage     = 'https://github.com/maxim-drobonoh/RNComponentSDK'
   s.license      = { :type => 'MIT', :file => 'LICENSE' }
   s.author       = { 'Maxim Drobonoh' => 'maxim@example.com' }
   
-  # IMPORTANT: Point to monorepo root, but specify subdirectory
+  # Point to RNComponentSDK repository
   s.source       = { 
-    :git => 'https://github.com/maxim-drobonoh/todolistsdk.git', 
-    :tag => "sdk-v#{s.version}" 
+    :git => 'https://github.com/maxim-drobonoh/RNComponentSDK.git', 
+    :tag => "v#{s.version}" 
   }
   
   s.ios.deployment_target = '15.1'
   s.swift_version = '5.0'
   
-  # Source files - relative to RNComponentSDK/ directory in monorepo
-  s.source_files = 'RNComponentSDK/RNComponentSDK/**/*.{h,m,mm,swift}'
-  s.public_header_files = 'RNComponentSDK/RNComponentSDK/RNComponentSDK.h'
+  # Source files - relative to repository root
+  s.source_files = 'RNComponentSDK/**/*.{h,m,mm,swift}'
+  s.public_header_files = 'RNComponentSDK/RNComponentSDK.h'
   
   # Resources (JS bundle and fonts)
   s.resource_bundles = {
-    'RNComponentSDK' => ['RNComponentSDK/RNComponentSDK/Resources/*']
+    'RNComponentSDK' => ['RNComponentSDK/Resources/*']
   }
   
   # React Native is expected to be provided by the consumer's Podfile

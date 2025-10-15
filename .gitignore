@@ -23,7 +23,8 @@ xcuserdata/
 
 # CocoaPods
 Pods/
-Podfile.lock
+# Note: Podfile.lock is committed for reproducible builds of the SDK
+# Podfile.lock
 *.xcworkspace
 
 # Swift Package Manager
@@ -45,5 +46,6 @@ node_modules/
 # Temporary
 .tmp/
 
-# Privacy manifest (generated)
-PrivacyInfo.xcprivacy
+# Privacy manifest
+# Note: PrivacyInfo.xcprivacy should be committed if required for App Store
+# PrivacyInfo.xcprivacy

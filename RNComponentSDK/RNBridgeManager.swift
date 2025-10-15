@@ -84,7 +84,17 @@ import React
         // Try to get bundle from framework resources
         let frameworkBundle = Bundle(for: type(of: self))
         
-        // First try to load from framework bundle
+        // First, try to load from CocoaPods resource bundle (RNComponentSDK.bundle)
+        if let resourceBundleURL = frameworkBundle.url(forResource: "RNComponentSDK", withExtension: "bundle"),
+           let resourceBundle = Bundle(url: resourceBundleURL) {
+            // Look for JS bundle in the resource bundle
+            if let jsURL = resourceBundle.url(forResource: bundleName.replacingOccurrences(of: ".jsbundle", with: ""), withExtension: "jsbundle") {
+                print("[RNBridgeManager] Found bundle in CocoaPods resource bundle: \(jsURL)")
+                return jsURL
+            }
+        }
+        
+        // Fallback: Try to load directly from framework bundle
         if let bundleURL = frameworkBundle.url(forResource: bundleName.replacingOccurrences(of: ".jsbundle", with: ""), withExtension: "jsbundle") {
             print("[RNBridgeManager] Found bundle in framework: \(bundleURL)")
             return bundleURL

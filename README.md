@@ -1,326 +1,267 @@
 # RNComponentSDK
 
-**A native iOS framework wrapper for React Native components**
+A native iOS SDK that wraps React Native components with a clean Swift API. Build beautiful UI components using React Native, expose them through type-safe Swift interfaces.
 
-RNComponentSDK is a pure iOS Framework that provides native Swift APIs for UI components powered by React Native. It completely hides the React Native implementation, giving you clean, type-safe Swift interfaces.
+## Features
 
-## 🌟 Features
+- ✅ **Clean Swift API**: Simple, type-safe interfaces - no React Native knowledge required
+- ✅ **Self-Contained**: All dependencies and resources bundled
+- ✅ **Async/Await Support**: Modern Swift concurrency (iOS 13+)
+- ✅ **CocoaPods Ready**: Easy installation via Git or local path
 
-- ✅ **Pure Native API**: Clean Swift interfaces, no React Native knowledge required
-- ✅ **Type-Safe**: Full Swift type safety with completion handlers and async/await
-- ✅ **Self-Contained**: All dependencies bundled within the framework
-- ✅ **Zero Configuration**: Works out of the box, no setup required
-- ✅ **Universal**: Supports both iOS Simulator and Device (arm64, x86_64)
+## Installation
 
-## 📦 What's Included
+### Prerequisites
 
-### Components
+**IMPORTANT**: Your app must have React Native configured. This SDK requires React Native 0.81.x to function.
 
-1. **SmallTextComponent**: Display text in 14pt font
-2. **LargeTextComponent**: Display text in 24pt bold with a check icon
-3. **AsyncStringArrayProvider**: Fetch string arrays asynchronously
+**Requirements:**
+- iOS 15.1+
+- Xcode 14.0+
+- CocoaPods
+- React Native 0.81.x in your app
 
-### APIs
-
-```swift
-// Singleton instance
-ComponentFactory.shared
-
-// Create components
-func createSmallText(_ text: String) -> UIView
-func createLargeText(_ text: String) -> UIView
-
-// Fetch data (callback)
-func fetchStringArray(completion: @escaping ([String]?, Error?) -> Void)
-
-// Fetch data (async/await)
-func fetchStringArray() async throws -> [String]  // iOS 13+
-```
-
-## 🚀 Quick Start
-
-### 1. Add to Podfile
+### Step 1: Add to Podfile
 
 ```ruby
-# In your app's Podfile
-pod 'RNComponentSDK', :path => '../RNComponentSDK'
-# Or from Git:
-# pod 'RNComponentSDK', :git => 'https://github.com/yourorg/RNComponentSDK.git'
+# Configure React Native (REQUIRED)
+require File.join(File.dirname(`node --print "require.resolve('react-native/package.json')"`), "scripts/react_native_pods")
+
+platform :ios, '15.1'
+prepare_react_native_project!
+
+target 'YourApp' do
+  use_frameworks! :linkage => :static
+  
+  # React Native (REQUIRED for RNComponentSDK)
+  use_react_native!(
+    :path => './node_modules/react-native',
+    :hermes_enabled => true
+  )
+  
+  # RNComponentSDK
+  pod 'RNComponentSDK', 
+      :git => 'https://github.com/maxim-drobonoh/RNComponentSDK.git'
+  
+  # Or install from local path:
+  # pod 'RNComponentSDK', :path => '../RNComponentSDK'
+end
+
+post_install do |installer|
+  react_native_post_install(installer, './node_modules/react-native')
+end
 ```
 
-### 2. Install
+### Step 2: Install
 
 ```bash
+cd ios
 pod install
 ```
 
-### 3. Use in Your Code
+### Step 3: Open Workspace
+
+**Always use the workspace, not the project:**
+
+```bash
+open YourApp.xcworkspace
+```
+
+## Usage
+
+### Basic Example
 
 ```swift
+import UIKit
 import RNComponentSDK
 
 class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        // Create a small text view
+        // Create a small text view (14pt)
         let smallText = ComponentFactory.shared.createSmallText("Hello, World!")
         smallText.frame = CGRect(x: 20, y: 100, width: 300, height: 30)
         view.addSubview(smallText)
         
-        // Create a large text view with icon
+        // Create a large text view (24pt bold with icon)
         let largeText = ComponentFactory.shared.createLargeText("Welcome!")
-        largeText.frame = CGRect(x: 20, y: 150, width: 300, height: 40)
+        largeText.frame = CGRect(x: 20, y: 150, width: 300, height: 50)
         view.addSubview(largeText)
-        
-        // Fetch data (callback style)
-        ComponentFactory.shared.fetchStringArray { items, error in
-            if let items = items {
-                print("Received: \\(items)")
-            }
+    }
+}
+```
+
+### Fetch Data (Callback Style)
+
+```swift
+ComponentFactory.shared.fetchStringArray { items, error in
+    if let error = error {
+        print("Error: \(error.localizedDescription)")
+        return
+    }
+    
+    if let items = items {
+        print("Received items: \(items)")
+        self.updateUI(with: items)
+    }
+}
+```
+
+### Fetch Data (Async/Await)
+
+```swift
+Task {
+    do {
+        let items = try await ComponentFactory.shared.fetchStringArray()
+        print("Received: \(items)")
+        await MainActor.run {
+            self.updateUI(with: items)
         }
-        
-        // Fetch data (async/await style - iOS 13+)
-        Task {
-            do {
-                let items = try await ComponentFactory.shared.fetchStringArray()
-                print("Received: \\(items)")
-            } catch {
-                print("Error: \\(error)")
-            }
+    } catch {
+        print("Error: \(error)")
+    }
+}
+```
+
+### SwiftUI Integration
+
+```swift
+import SwiftUI
+import RNComponentSDK
+
+struct RNTextView: UIViewRepresentable {
+    let text: String
+    let isLarge: Bool
+    
+    func makeUIView(context: Context) -> UIView {
+        if isLarge {
+            return ComponentFactory.shared.createLargeText(text)
+        } else {
+            return ComponentFactory.shared.createSmallText(text)
+        }
+    }
+    
+    func updateUIView(_ uiView: UIView, context: Context) {}
+}
+
+// Usage
+struct ContentView: View {
+    var body: some View {
+        VStack(spacing: 20) {
+            RNTextView(text: "Small Text", isLarge: false)
+                .frame(height: 30)
+            
+            RNTextView(text: "Large Header", isLarge: true)
+                .frame(height: 50)
         }
     }
 }
 ```
 
-## 📐 Architecture
+## API Reference
 
-### Directory Structure
+### ComponentFactory.shared
 
-```
-RNComponentSDK/
-├── RNComponentSDK/
-│   ├── RNComponentSDK.h          # Umbrella header
-│   ├── Info.plist                # Framework metadata
-│   ├── RNBridgeManager.swift     # React Native bridge manager
-│   ├── ComponentFactory.swift    # Public API
-│   └── Resources/
-│       ├── main.jsbundle         # JavaScript bundle
-│       └── MaterialIcons.ttf     # Icon font
-├── Podfile                       # CocoaPods dependencies
-├── build-framework.sh            # Build script
-└── README.md
-```
-
-### How It Works
-
-1. **JavaScript Bundle**: React Native components are pre-compiled into `main.jsbundle`
-2. **Bridge Manager**: `RNBridgeManager` initializes and manages the React Native bridge
-3. **Component Factory**: `ComponentFactory` provides clean Swift APIs using `RCTRootView`
-4. **Resource Embedding**: Bundle and fonts are embedded in the framework's resources
-
-## 🔧 Development
-
-### Prerequisites
-
-- Xcode 14.0+
-- iOS 13.0+ deployment target
-- CocoaPods
-- Node.js 20+ (for building JavaScript bundle)
-
-### Building from Source
-
-```bash
-# 1. Build JavaScript bundle
-cd ../RNLib
-npm run bundle:ios
-
-# 2. Copy bundle and fonts
-cp ios/main.jsbundle ../RNComponentSDK/RNComponentSDK/Resources/
-cp <path-to-font>/MaterialIcons.ttf ../RNComponentSDK/RNComponentSDK/Resources/
-
-# 3. Install CocoaPods
-cd ../RNComponentSDK
-pod install
-
-# 4. Build framework
-./build-framework.sh
-```
-
-### Manual Xcode Build
-
-If you prefer to build manually:
-
-```bash
-# Open workspace (not .xcodeproj!)
-open RNComponentSDK.xcworkspace
-
-# In Xcode:
-# 1. Select RNComponentSDK scheme
-# 2. Choose "Any iOS Device (arm64)" destination
-# 3. Product → Archive
-```
-
-## 🎯 API Reference
-
-### ComponentFactory
-
-The main entry point for all framework functionality.
-
-#### Properties
-
-```swift
-static let shared: ComponentFactory  // Singleton instance
-```
+Main singleton providing all SDK functionality.
 
 #### Methods
 
-##### createSmallText(_:)
+**`createSmallText(_ text: String) -> UIView`**
 
-Creates a view with 14pt text.
+Creates a view displaying text in 14pt font.
 
-```swift
-func createSmallText(_ text: String) -> UIView
-```
-
-**Parameters:**
-- `text`: The text to display
-
-**Returns:** A `UIView` containing the React Native component
-
-**Example:**
 ```swift
 let view = ComponentFactory.shared.createSmallText("Hello")
 view.frame = CGRect(x: 0, y: 0, width: 200, height: 30)
 parentView.addSubview(view)
 ```
 
-##### createLargeText(_:)
+**`createLargeText(_ text: String) -> UIView`**
 
-Creates a view with 24pt bold text and a check icon.
+Creates a view displaying text in 24pt bold with a check icon.
 
-```swift
-func createLargeText(_ text: String) -> UIView
-```
-
-**Parameters:**
-- `text`: The text to display
-
-**Returns:** A `UIView` containing the React Native component
-
-**Example:**
 ```swift
 let view = ComponentFactory.shared.createLargeText("Success!")
-view.frame = CGRect(x: 0, y: 0, width: 250, height: 40)
+view.frame = CGRect(x: 0, y: 0, width: 250, height: 50)
 parentView.addSubview(view)
 ```
 
-##### fetchStringArray(completion:)
+**`fetchStringArray(completion: @escaping ([String]?, Error?) -> Void)`**
 
 Fetches an array of strings asynchronously (callback style).
 
 ```swift
-func fetchStringArray(completion: @escaping ([String]?, Error?) -> Void)
-```
-
-**Parameters:**
-- `completion`: Callback with result or error
-
-**Example:**
-```swift
 ComponentFactory.shared.fetchStringArray { items, error in
-    guard let items = items else {
-        print("Error: \\(error?.localizedDescription ?? "Unknown")")
-        return
-    }
-    print("Items: \\(items)")
+    guard let items = items else { return }
+    print("Items: \(items)")
 }
 ```
 
-##### fetchStringArray() async throws
+**`fetchStringArray() async throws -> [String]`**
 
-Fetches an array of strings asynchronously (async/await style).
-
-```swift
-func fetchStringArray() async throws -> [String]
-```
-
-**Returns:** Array of strings
-
-**Throws:** `Error` if the operation fails
-
-**Example:**
-```swift
-Task {
-    do {
-        let items = try await ComponentFactory.shared.fetchStringArray()
-        updateUI(with: items)
-    } catch {
-        showError(error)
-    }
-}
-```
-
-### RNBridgeManager
-
-Low-level bridge management (typically not used directly).
+Fetches an array of strings asynchronously (async/await style, iOS 13+).
 
 ```swift
-static let shared: RNBridgeManager    // Singleton
-func initializeBridge() -> Bool       // Initialize React Native
-func getBridge() -> RCTBridge?        // Get bridge instance
-func reloadBridge()                   // Reload (development)
-func invalidateBridge()               // Cleanup
+let items = try await ComponentFactory.shared.fetchStringArray()
+print("Items: \(items)")
 ```
 
-## 🐛 Troubleshooting
+## Troubleshooting
 
-### "Bundle not found" error
+### "No such module 'RNComponentSDK'"
 
-Ensure `main.jsbundle` is in the framework's Resources:
+**Solution**: Ensure you opened `.xcworkspace`, not `.xcodeproj`
+
 ```bash
-ls RNComponentSDK/Resources/main.jsbundle
+open YourApp.xcworkspace
 ```
 
-### Icons not displaying
+### "No such module 'React'"
 
-Ensure `MaterialIcons.ttf` is in Resources and listed in `Info.plist`:
-```xml
-<key>UIAppFonts</key>
-<array>
-    <string>MaterialIcons.ttf</string>
-</array>
+**Solution**: React Native is not configured. Add to your Podfile:
+
+```ruby
+use_react_native!(
+  :path => './node_modules/react-native',
+  :hermes_enabled => true
+)
 ```
 
-### Build errors with CocoaPods
+### Components Not Rendering
 
-Clean and reinstall:
+**Solution**: Set explicit frame or constraints:
+
+```swift
+let view = ComponentFactory.shared.createSmallText("Hello")
+view.frame = CGRect(x: 0, y: 0, width: 200, height: 30)  // Required!
+parentView.addSubview(view)
+```
+
+### "Bundle not found" Error
+
+**Solution**: Clean and reinstall:
+
 ```bash
+cd ios
 rm -rf Pods Podfile.lock
 pod install
 ```
 
-### Components not rendering
+## Version Compatibility
 
-Check bridge initialization:
-```swift
-let isReady = RNBridgeManager.shared.initializeBridge()
-print("Bridge ready: \\(isReady)")
-```
+| RNComponentSDK | React Native | iOS    | Xcode |
+|----------------|--------------|--------|-------|
+| 1.0.0          | 0.81.x       | 15.1+  | 14.0+ |
 
-## 📄 License
+## License
 
-MIT License - See LICENSE file for details
+MIT License - See [LICENSE](LICENSE) file for details.
 
-## 🤝 Contributing
+## Support
 
-This SDK is part of the todolistsdk project. See main repository for contribution guidelines.
-
-## 📞 Support
-
-For issues, questions, or feature requests, please open an issue in the main repository.
+For issues or questions, please open an issue on [GitHub](https://github.com/maxim-drobonoh/RNComponentSDK/issues).
 
 ---
 
-**Built with ❤️ using React Native + Swift**
-
+**Built with React Native + Swift**
