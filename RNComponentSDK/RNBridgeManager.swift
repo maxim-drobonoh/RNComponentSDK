@@ -17,7 +17,7 @@ import Foundation
     
     // MARK: - Properties
     
-    private var bridge: AnyObject?
+    private var bridge: NSObject?
     private var isInitialized = false
     private let bundleName = "main.jsbundle"
     
@@ -44,7 +44,7 @@ import Foundation
         
         print("[RNBridgeManager] Initializing bridge with bundle: \(jsCodeLocation)")
         
-        bridge = RNReactBridge.createBridge(withBundleURL: jsCodeLocation)
+        bridge = RNReactBridge.createBridge(withBundleURL: jsCodeLocation) as? NSObject
         isInitialized = true
         print("[RNBridgeManager] Bridge initialized successfully")
         return true
@@ -52,7 +52,7 @@ import Foundation
     
     /// Get the active bridge instance
     /// - Returns: The bridge instance, or nil if not initialized
-    @objc public func getBridge() -> AnyObject? {
+    @objc public func getBridge() -> NSObject? {
         if !isInitialized {
             _ = initializeBridge()
         }
