@@ -29,11 +29,10 @@ Pod::Spec.new do |s|
     'RNComponentSDK' => ['RNComponentSDK/Resources/*']
   }
   
-  # React Native dependencies
-  # NOTE: React Native pods are NOT available on CocoaPods trunk.
-  # They only exist as local podspecs in node_modules/react-native.
-  # Consumers MUST install React Native via npm and configure with use_react_native!()
-  # This is the standard React Native CocoaPods integration approach.
+  # React Native dependencies (will be resolved from consumer's node_modules)
+  s.dependency 'React-Core'
+  s.dependency 'React'
+  s.dependency 'React-RCTImage'
   
   # Build settings
   s.pod_target_xcconfig = {
