@@ -6,9 +6,20 @@
 //
 
 #import "RNReactBridge.h"
+
+#if __has_include(<React/RCTBridge.h>)
+#import <React/RCTBridge.h>
+#import <React/RCTRootView.h>
+#import <React/RCTBundleURLProvider.h>
+#elif __has_include(<React-Core/RCTBridge.h>)
 #import <React-Core/RCTBridge.h>
 #import <React-Core/RCTRootView.h>
 #import <React-Core/RCTBundleURLProvider.h>
+#else
+#import "RCTBridge.h"
+#import "RCTRootView.h"
+#import "RCTBundleURLProvider.h"
+#endif
 
 @implementation RNReactBridge
 

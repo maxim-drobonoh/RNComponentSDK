@@ -42,13 +42,17 @@ Pod::Spec.new do |s|
     'BUILD_LIBRARY_FOR_DISTRIBUTION' => 'YES',
     'CLANG_CXX_LANGUAGE_STANDARD' => 'c++20',
     'HEADER_SEARCH_PATHS' => '$(inherited) ' \
+      '"${PODS_ROOT}/Headers/Public" ' \
       '"${PODS_ROOT}/Headers/Public/React-Core" ' \
+      '"${PODS_ROOT}/Headers/Public/React" ' \
       '"${PODS_ROOT}/Headers/Public/React-RCTImage" ' \
       '"${PODS_ROOT}/Headers/Public/React-hermes" ' \
       '"${PODS_ROOT}/Headers/Private/React-Core" ' \
       '"${PODS_CONFIGURATION_BUILD_DIR}/React-Core/React_Core.framework/Headers" ' \
+      '"${PODS_CONFIGURATION_BUILD_DIR}/React/React.framework/Headers" ' \
       '"${PODS_CONFIGURATION_BUILD_DIR}/React-hermes/React_hermes.framework/Headers"',
-    'OTHER_CFLAGS' => '$(inherited) -DFOLLY_NO_CONFIG -DFOLLY_MOBILE=1 -DFOLLY_USE_LIBCPP=1'
+    'OTHER_CFLAGS' => '$(inherited) -DFOLLY_NO_CONFIG -DFOLLY_MOBILE=1 -DFOLLY_USE_LIBCPP=1',
+    'USE_HEADERMAP' => 'YES'
   }
   
   # User target build settings
