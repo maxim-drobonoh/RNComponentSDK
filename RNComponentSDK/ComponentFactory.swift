@@ -65,8 +65,9 @@ import UIKit
         
         // Use JavaScript to call the async function
         DispatchQueue.main.async {
-            bridge.enqueueJSCall(
-                "RCTDeviceEventEmitter",
+            RNReactBridge.enqueueJSCall(
+                bridge,
+                module: "RCTDeviceEventEmitter",
                 method: "emit",
                 args: ["fetchStringArray", ["callbackId": callbackId]],
                 completion: { [weak self] in
@@ -111,13 +112,13 @@ import UIKit
         }
         
         let rootView = RNReactBridge.createRootView(
-            with: bridge,
+            withBridge: bridge,
             moduleName: moduleName,
             initialProperties: initialProps
         )
         
         // Set a reasonable default size
-        rootView.backgroundColor = .clear
+        rootView.backgroundColor = UIColor.clear
         rootView.frame = CGRect(x: 0, y: 0, width: 320, height: 50)
         
         return rootView
@@ -126,7 +127,7 @@ import UIKit
     private func createErrorView(message: String) -> UIView {
         let label = UILabel()
         label.text = "Error: \(message)"
-        label.textColor = .red
+        label.textColor = UIColor.red
         label.textAlignment = .center
         label.numberOfLines = 0
         label.frame = CGRect(x: 0, y: 0, width: 320, height: 50)

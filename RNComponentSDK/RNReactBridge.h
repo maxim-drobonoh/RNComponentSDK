@@ -21,7 +21,13 @@ NS_ASSUME_NONNULL_BEGIN
                           moduleName:(NSString *)moduleName
                    initialProperties:(nullable NSDictionary *)initialProperties;
 
+/// Enqueue a JavaScript call on the bridge (for async operations)
++ (void)enqueueJSCall:(id)bridge
+               module:(NSString *)module
+               method:(NSString *)method
+                 args:(NSArray *)args
+           completion:(void (^)(void))completion;
+
 @end
 
 NS_ASSUME_NONNULL_END
-

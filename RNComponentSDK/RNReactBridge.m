@@ -28,5 +28,14 @@
     return rootView;
 }
 
++ (void)enqueueJSCall:(id)bridge
+               module:(NSString *)module
+               method:(NSString *)method
+                 args:(NSArray *)args
+           completion:(void (^)(void))completion {
+    RCTBridge *rctBridge = (RCTBridge *)bridge;
+    [rctBridge enqueueJSCall:module method:method args:args completion:completion];
+}
+
 @end
 
