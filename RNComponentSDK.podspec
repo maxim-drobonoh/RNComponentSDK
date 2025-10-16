@@ -36,7 +36,7 @@ Pod::Spec.new do |s|
   
   # Expo dependencies (required for @expo/vector-icons)
   s.dependency 'ExpoModulesCore'
-  s.dependency 'EXFont'
+  s.dependency 'ExpoFont'
   
   # Build settings
   s.pod_target_xcconfig = {
