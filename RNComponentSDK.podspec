@@ -34,6 +34,10 @@ Pod::Spec.new do |s|
   s.dependency 'React'
   s.dependency 'React-RCTImage'
   
+  # Expo dependencies (required for @expo/vector-icons)
+  s.dependency 'ExpoModulesCore'
+  s.dependency 'EXFont'
+  
   # Build settings
   s.pod_target_xcconfig = {
     'DEFINES_MODULE' => 'YES',

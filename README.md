@@ -17,12 +17,13 @@ A native iOS SDK that wraps React Native components with a clean Swift API. Buil
 - Xcode 14.0+
 - CocoaPods
 - **React Native 0.81.x** (required)
+- **Expo modules** (required for icon fonts)
 
-### Why React Native is Required
+### Why React Native and Expo are Required
 
-This SDK wraps React Native components. React Native CocoaPods integration requires the consumer to install React Native via npm - it's not available on CocoaPods trunk.
+This SDK wraps React Native components that use @expo/vector-icons for icons. Both React Native and Expo modules are required dependencies installed via npm.
 
-### Step 1: Install React Native
+### Step 1: Install React Native and Expo
 
 In your iOS app project root:
 
@@ -32,6 +33,10 @@ npm init -y
 
 # Install React Native
 npm install react-native@0.81.4
+
+# Install Expo modules (required for icon fonts)
+npm install expo@~49.0.0 expo-modules-core expo-font
+npx install-expo-modules
 ```
 
 ### Step 2: Configure Podfile
