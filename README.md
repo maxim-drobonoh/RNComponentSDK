@@ -21,28 +21,43 @@ A native iOS SDK that wraps React Native components with a clean Swift API. Buil
 
 ### Why React Native and Expo are Required
 
-This SDK wraps React Native components that use @expo/vector-icons for icons. Both React Native and Expo modules are required dependencies installed via npm.
+**RNComponentSDK is built with React Native and Expo, but you don't need to know React Native to use it.** The SDK provides a clean Swift API that hides all React Native complexity.
 
-### Step 1: Install React Native and Expo
+Think of it like using a web view - your app needs WebKit, but you don't write HTML/CSS. Similarly:
 
-In your iOS app project root:
+- **React Native**: Provides the JavaScript runtime engine (like WebKit for web content)
+- **Expo Modules**: Provide native functionality (fonts, icons, etc.)
+- **RNComponentSDK**: Provides the Swift API you actually use in your code
+
+**You install these once during setup, then use only Swift.** The SDK manages all React Native complexity internally.
+
+### Step 1: Install React Native and Expo Dependencies
+
+In your iOS app project root (this is a one-time setup):
 
 ```bash
 # Initialize package.json if you don't have one
 npm init -y
 
-# Install React Native
+# Install React Native (provides the runtime)
 npm install react-native@0.81.4
 
-# Install Expo modules (required for icon fonts)
+# Install Expo modules (provides fonts, icons, etc.)
 npm install expo@~49.0.0 expo-modules-core expo-font
-npx install-expo-modules
+
+# Configure Expo autolinking for iOS
+npx install-expo-modules@latest
 ```
+
+**Note**: These are runtime dependencies. The SDK uses them internally - you won't write any React Native or Expo code yourself.
 
 ### Step 2: Configure Podfile
 
+Add the following to your `Podfile`:
+
 ```ruby
-# Load React Native CocoaPods helper
+# Load React Native and Expo helpers
+require File.join(File.dirname(`node --print "require.resolve('expo/package.json')"`), "scripts/autolinking")
 require File.join(File.dirname(`node --print "require.resolve('react-native/package.json')"`), "scripts/react_native_pods")
 
 platform :ios, '15.1'
@@ -51,22 +66,34 @@ prepare_react_native_project!
 target 'YourApp' do
   use_frameworks! :linkage => :static
   
-  # React Native (provides the runtime for RNComponentSDK)
+  # Expo modules (required by RNComponentSDK)
+  use_expo_modules!
+  
+  # React Native (provides the runtime)
   use_react_native!(
     :path => './node_modules/react-native',
     :hermes_enabled => true,
     :app_path => "#{Dir.pwd}"
   )
   
-  # RNComponentSDK
+  # RNComponentSDK - The actual SDK you'll use
   pod 'RNComponentSDK', 
       :git => 'https://github.com/maxim-drobonoh/RNComponentSDK.git'
-end
-
-post_install do |installer|
-  react_native_post_install(installer, './node_modules/react-native')
+  
+  post_install do |installer|
+    react_native_post_install(
+      installer,
+      './node_modules/react-native',
+      :mac_catalyst_enabled => false
+    )
+  end
 end
 ```
+
+**What this does:**
+- Sets up React Native runtime (needed by the SDK)
+- Configures Expo module autolinking (needed for fonts/icons)
+- Adds RNComponentSDK to your project
 
 ### Step 3: Install Pods
 
@@ -79,6 +106,42 @@ pod install
 ```bash
 open YourApp.xcworkspace
 ```
+
+## How It Works
+
+### Architecture Overview
+
+RNComponentSDK uses an **isolated architecture**:
+
+```
+┌─────────────────────────────────┐
+│   Your Swift App                │
+│   ├─ Swift code only            │
+│   └─ No RN knowledge needed     │
+│      │                           │
+│      └─► ComponentFactory       │
+│          (Swift API)             │
+│             │                    │
+│        ┌────▼─────────────┐     │
+│        │  RNComponentSDK  │     │
+│        │  ├─ Own Bridge   │     │
+│        │  ├─ Bundled JS   │     │
+│        │  └─ Expo Modules │     │
+│        └──────────────────┘     │
+└─────────────────────────────────┘
+```
+
+**Key Points:**
+- ✅ SDK manages its own React Native bridge internally
+- ✅ JavaScript is pre-bundled and embedded in the SDK
+- ✅ Expo modules are initialized automatically
+- ✅ Your app only sees clean Swift APIs
+- ✅ No React Native code in your app
+
+**Why is this better than alternatives?**
+- **vs Native-only**: Get React Native's powerful UI capabilities without writing RN code
+- **vs Full RN App**: Keep your native Swift app, add RN features incrementally
+- **vs Shared Bridge**: Isolated runtime means no conflicts with other libraries
 
 ## Usage
 

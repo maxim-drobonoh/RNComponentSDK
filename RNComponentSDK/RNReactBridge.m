@@ -21,11 +21,30 @@
 #import "RCTBundleURLProvider.h"
 #endif
 
+// Import Expo modules if available
+#if __has_include(<ExpoModulesCore/ExpoModulesCore.h>)
+#import <ExpoModulesCore/ExpoModulesCore.h>
+#define HAS_EXPO 1
+#else
+#define HAS_EXPO 0
+#endif
+
 @implementation RNReactBridge
 
 + (id)createBridgeWithBundleURL:(NSURL *)bundleURL {
+    // Create module provider that includes Expo modules
+    RCTBridgeModuleListProvider moduleProvider = ^NSArray<id<RCTBridgeModule>> * {
+#if HAS_EXPO
+        // Include Expo modules in the bridge
+        NSArray<id<RCTBridgeModule>> *expoModules = [ExpoModulesProvider getExpoModules];
+        return expoModules;
+#else
+        return @[];
+#endif
+    };
+    
     return [[RCTBridge alloc] initWithBundleURL:bundleURL
-                                 moduleProvider:nil
+                                 moduleProvider:moduleProvider
                                   launchOptions:nil];
 }
 

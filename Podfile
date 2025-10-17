@@ -3,8 +3,15 @@
 
 platform :ios, '15.1'
 
-# Use local node_modules for React Native
+# Use local node_modules for React Native and Expo
 require File.join(__dir__, 'node_modules/react-native/scripts/react_native_pods.rb')
+
+# Add Expo autolinking support for development
+begin
+  require File.join(File.dirname(`node --print "require.resolve('expo/package.json')"`), "scripts/autolinking")
+rescue
+  puts "⚠️  Expo not found. Run: npm install expo expo-modules-core expo-font"
+end
 
 prepare_react_native_project!
 
@@ -12,6 +19,14 @@ inhibit_all_warnings!
 
 target 'RNComponentSDK' do
   use_frameworks! :linkage => :static
+  
+  # Expo modules (required for fonts, icons, etc.)
+  begin
+    use_expo_modules!
+  rescue => e
+    puts "⚠️  Could not load Expo modules: #{e.message}"
+    puts "    Run: npm install expo expo-modules-core expo-font"
+  end
   
   # Install React Native pods from local node_modules
   use_react_native!(
